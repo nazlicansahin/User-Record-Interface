@@ -1,13 +1,13 @@
 "use client"; // This is a client component 👈🏽
 
-import React, { useCallback, useMemo } from 'react';
-import { useState } from 'react';
+import React, { useCallback, useMemo } from "react";
+import { useState } from "react";
 import MaterialReactTable, {
   type MaterialReactTableProps,
   type MRT_Cell,
   type MRT_ColumnDef,
   type MRT_Row,
-} from 'material-react-table';
+} from "material-react-table";
 import {
   Box,
   Button,
@@ -20,9 +20,9 @@ import {
   Stack,
   TextField,
   Tooltip,
-} from '@mui/material';
-import { Delete, Edit } from '@mui/icons-material';
-import { data, states } from './makeData';
+} from "@mui/material";
+import { Delete, Edit } from "@mui/icons-material";
+import { data, states } from "./makeData";
 
 export type Person = {
   id: string;
@@ -33,9 +33,9 @@ export type Person = {
   state: string;
 };
 
-const Table = () => {
+const Table = (props: { data: Person[] }) => {
   const [createModalOpen, setCreateModalOpen] = useState(false);
-  const [tableData, setTableData] = useState<Person[]>(() => data);
+  const [tableData, setTableData] = useState<Person[]>(() => props.data);
   const [validationErrors, setValidationErrors] = useState<{
     [cellId: string]: string;
   }>({});
@@ -45,7 +45,7 @@ const Table = () => {
     setTableData([...tableData]);
   };
 
-  const handleSaveRowEdits: MaterialReactTableProps<Person>['onEditingRowSave'] =
+  const handleSaveRowEdits: MaterialReactTableProps<Person>["onEditingRowSave"] =
     async ({ exitEditingMode, row, values }) => {
       if (!Object.keys(validationErrors).length) {
         tableData[row.index] = values;
@@ -62,7 +62,7 @@ const Table = () => {
   const handleDeleteRow = useCallback(
     (row: MRT_Row<Person>) => {
       if (
-        !confirm(`Are you sure you want to delete ${row.getValue('firstName')}`)
+        !confirm(`Are you sure you want to delete ${row.getValue("firstName")}`)
       ) {
         return;
       }
@@ -70,23 +70,23 @@ const Table = () => {
       tableData.splice(row.index, 1);
       setTableData([...tableData]);
     },
-    [tableData],
+    [tableData]
   );
 
   const getCommonEditTextFieldProps = useCallback(
     (
-      cell: MRT_Cell<Person>,
-    ): MRT_ColumnDef<Person>['muiTableBodyCellEditTextFieldProps'] => {
+      cell: MRT_Cell<Person>
+    ): MRT_ColumnDef<Person>["muiTableBodyCellEditTextFieldProps"] => {
       return {
         error: !!validationErrors[cell.id],
         helperText: validationErrors[cell.id],
         onBlur: (event) => {
           const isValid =
-            cell.column.id === 'email'
+            cell.column.id === "email"
               ? validateEmail(event.target.value)
-              : cell.column.id === 'age'
-                ? validateAge(+event.target.value)
-                : validateRequired(event.target.value);
+              : cell.column.id === "age"
+              ? validateAge(+event.target.value)
+              : validateRequired(event.target.value);
           if (!isValid) {
             //set validation error for cell if invalid
             setValidationErrors({
@@ -103,55 +103,55 @@ const Table = () => {
         },
       };
     },
-    [validationErrors],
+    [validationErrors]
   );
 
   const columns = useMemo<MRT_ColumnDef<Person>[]>(
     () => [
       {
-        accessorKey: 'id',
-        header: 'ID',
+        accessorKey: "id",
+        header: "ID",
         enableColumnOrdering: false,
         enableEditing: false, //disable editing on this column
         enableSorting: false,
         size: 80,
       },
       {
-        accessorKey: 'firstName',
-        header: 'First Name',
+        accessorKey: "firstName",
+        header: "First Name",
         size: 140,
         muiTableBodyCellEditTextFieldProps: ({ cell }) => ({
           ...getCommonEditTextFieldProps(cell),
         }),
       },
       {
-        accessorKey: 'lastName',
-        header: 'Last Name',
+        accessorKey: "lastName",
+        header: "Last Name",
         size: 140,
         muiTableBodyCellEditTextFieldProps: ({ cell }) => ({
           ...getCommonEditTextFieldProps(cell),
         }),
       },
       {
-        accessorKey: 'email',
-        header: 'Email',
+        accessorKey: "email",
+        header: "Email",
         muiTableBodyCellEditTextFieldProps: ({ cell }) => ({
           ...getCommonEditTextFieldProps(cell),
-          type: 'email',
+          type: "email",
         }),
       },
       {
-        accessorKey: 'age',
-        header: 'Age',
+        accessorKey: "age",
+        header: "Age",
         size: 80,
         muiTableBodyCellEditTextFieldProps: ({ cell }) => ({
           ...getCommonEditTextFieldProps(cell),
-          type: 'number',
+          type: "number",
         }),
       },
       {
-        accessorKey: 'state',
-        header: 'State',
+        accessorKey: "state",
+        header: "State",
         muiTableBodyCellEditTextFieldProps: {
           select: true, //change to select for a dropdown
           children: states.map((state) => (
@@ -162,16 +162,16 @@ const Table = () => {
         },
       },
     ],
-    [getCommonEditTextFieldProps],
+    [getCommonEditTextFieldProps]
   );
 
   return (
     <>
       <MaterialReactTable
         displayColumnDefOptions={{
-          'mrt-row-actions': {
+          "mrt-row-actions": {
             muiTableHeadCellProps: {
-              align: 'center',
+              align: "center",
             },
             size: 120,
           },
@@ -184,7 +184,7 @@ const Table = () => {
         onEditingRowSave={handleSaveRowEdits}
         onEditingRowCancel={handleCancelRowEdits}
         renderRowActions={({ row, table }) => (
-          <Box sx={{ display: 'flex', gap: '1rem' }}>
+          <Box sx={{ display: "flex", gap: "1rem" }}>
             <Tooltip arrow placement="left" title="Edit">
               <IconButton onClick={() => table.setEditingRow(row)}>
                 <Edit />
@@ -233,9 +233,9 @@ export const CreateNewAccountModal = ({
 }: CreateModalProps) => {
   const [values, setValues] = useState<any>(() =>
     columns.reduce((acc, column) => {
-      acc[column.accessorKey ?? ''] = '';
+      acc[column.accessorKey ?? ""] = "";
       return acc;
-    }, {} as any),
+    }, {} as any)
   );
 
   const handleSubmit = () => {
@@ -251,9 +251,9 @@ export const CreateNewAccountModal = ({
         <form onSubmit={(e) => e.preventDefault()}>
           <Stack
             sx={{
-              width: '100%',
-              minWidth: { xs: '300px', sm: '360px', md: '400px' },
-              gap: '1.5rem',
+              width: "100%",
+              minWidth: { xs: "300px", sm: "360px", md: "400px" },
+              gap: "1.5rem",
             }}
           >
             {columns.map((column) => (
@@ -269,7 +269,7 @@ export const CreateNewAccountModal = ({
           </Stack>
         </form>
       </DialogContent>
-      <DialogActions sx={{ p: '1.25rem' }}>
+      <DialogActions sx={{ p: "1.25rem" }}>
         <Button onClick={onClose}>Cancel</Button>
         <Button color="secondary" onClick={handleSubmit} variant="contained">
           Create New Account
@@ -285,7 +285,7 @@ const validateEmail = (email: string) =>
   email
     .toLowerCase()
     .match(
-      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
     );
 const validateAge = (age: number) => age >= 18 && age <= 50;
 

@@ -1,6 +1,6 @@
-import { Person } from './table';
+//import { Person } from './table';
 "use client"; // This is a client component 👈🏽
-
+/*
 export const data: Person[] = [
   {
     id: '9s41rp',
@@ -67,7 +67,7 @@ export const data: Person[] = [
     state: 'Nebraska',
   },
 ];
-
+*/
 //50 us states array
 export const states = [
   'Alabama',

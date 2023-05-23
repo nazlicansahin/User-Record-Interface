@@ -16,22 +16,49 @@ import {
   Tooltip,
 } from '@mui/material';
 import { Delete, Edit } from '@mui/icons-material';
-import { data, states } from './makeData';
+import { states } from './makeData';
 
-const Example = () => {
+const Table = ({data}) => {
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [tableData, setTableData] = useState(() => data);
   const [validationErrors, setValidationErrors] = useState({});
 
   const handleCreateNewRow = (values) => {
-    tableData.push(values);
-    setTableData([...tableData]);
+    console.log(values);
+    fetch('http://localhost:3000/api/users', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(values),
+    }).then((res) => {
+      if (res.ok) {
+        return res.json();
+      }
+      throw new Error(res.statusText);
+    }).then((data) => {
+      console.log(data);
+      data.data.id = data.data._id;
+      setTableData([...tableData, data.data]);
+      setCreateModalOpen(false);
+    }).catch((err) => {
+      console.log(err);
+    });
   };
 
   const handleSaveRowEdits = async ({ exitEditingMode, row, values }) => {
     if (!Object.keys(validationErrors).length) {
       tableData[row.index] = values;
+      const sentData = { ...values };
+      delete sentData.id;
       //send/receive api updates here, then refetch or update local table data for re-render
+      await fetch(`http://localhost:3000/api/users/${row.original.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(sentData),
+      });
       setTableData([...tableData]);
       exitEditingMode(); //required to exit editing mode and close modal
     }
@@ -41,19 +68,23 @@ const Example = () => {
     setValidationErrors({});
   };
 
-  const handleDeleteRow = useCallback(
+  const handleDeleteRow = (useCallback(
     (row) => {
       if (
-        !confirm(`Are you sure you want to delete ${row.getValue('firstName')}`)
+         !confirm(`Are you sure you want to delete ${row.getValue('firstName')}`)
       ) {
         return;
       }
       //send api delete request here, then refetch or update local table data for re-render
+      fetch(`http://localhost:3000/api/users/${row.original.id}`, {
+        method: 'DELETE'
+      }
+      )
       tableData.splice(row.index, 1);
       setTableData([...tableData]);
     },
     [tableData],
-  );
+  ));
 
   const getCommonEditTextFieldProps = useCallback(
     (cell) => {
@@ -197,7 +228,7 @@ const Example = () => {
   );
 };
 
-//example of creating a mui dialog modal for creating new rows
+//Table of creating a mui dialog modal for creating new rows
 export const CreateNewAccountModal = ({ open, columns, onClose, onSubmit }) => {
   const [values, setValues] = useState(() =>
     columns.reduce((acc, column) => {
@@ -225,6 +256,7 @@ export const CreateNewAccountModal = ({ open, columns, onClose, onSubmit }) => {
             }}
           >
             {columns.map((column) => (
+              column.enableEditing !== false  ? (
               <TextField
                 key={column.accessorKey}
                 label={column.header}
@@ -233,7 +265,7 @@ export const CreateNewAccountModal = ({ open, columns, onClose, onSubmit }) => {
                   setValues({ ...values, [e.target.name]: e.target.value })
                 }
               />
-            ))}
+            ): null))}
           </Stack>
         </form>
       </DialogContent>
@@ -257,4 +289,4 @@ const validateEmail = (email) =>
     );
 const validateAge = (age) => age >= 18 && age <= 50;
 
-export default Example;
+export default Table;

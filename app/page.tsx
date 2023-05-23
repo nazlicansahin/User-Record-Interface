@@ -1,9 +1,8 @@
-import Example from '../components/JS'
+import Link from 'next/link'
 export default function Home() {
   return (
     <>
-      <Example />
-
+      <Link href="/users">Users</Link>
     </>
   )
 }
