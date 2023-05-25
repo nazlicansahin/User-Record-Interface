@@ -1,13 +1,12 @@
 "use client"
 import DataTable from "/components/DataTable";
-import { states } from "/components/makeData";
+import { categories } from "/components/makeData";
 import { usePathname } from "next/navigation";
 
 const url = "http://localhost:3000";
-async function getUsers() {
-  // with revalidate: 10
+async function getBooks() {
   const res = await fetch(
-    `${url}/api/users`,
+    `${url}/api/books`,
 
     {
       cache: "no-cache",
@@ -17,7 +16,6 @@ async function getUsers() {
       },
     }
   );
-
   if (!res.ok) {
     throw new Error(res.statusText);
   }
@@ -25,8 +23,9 @@ async function getUsers() {
   return res.json();
 }
 
-export default async function Users() {
+export default async function Books() {
   const pathName = usePathname();
+  
   //const [url, setUrl] = useState(new URL(window.location.href).origin);
   // get url origin with useRoturer
 
@@ -41,45 +40,45 @@ export default async function Users() {
       type: "id",
     },
     {
-      accessorKey: "firstName",
-      header: "First Name",
+      accessorKey: "bookName",
+      header: "Book Name",
       size: 140,
       type: "text",
     },
     {
-      accessorKey: "lastName",
-      header: "Last Name",
+      accessorKey: "authorName",
+      header: "Author Name",
       size: 140,
       type: "text",
     },
     {
-      accessorKey: "email",
-      header: "Email",
+      accessorKey: "authorEmail",
+      header: "Author Email",
       type: "email",
     },
     {
-      accessorKey: "age",
-      header: "Age",
+      accessorKey: "pages",
+      header: "Pages",
       size: 80,
       type: "number",
     },
     {
-      accessorKey: "state",
-      header: "State",
+      accessorKey: "category",
+      header: "Category",
       type: "select",
-      values: states,
+      values: categories,
     },
   ];
 
-  const userData = await getUsers();
+  const bookData = await getBooks();
 
-  const [users] = await Promise.all([userData]);
+  const [books] = await Promise.all([bookData]);
 
   return (
     <>
       <h1>Hello</h1>
       <div>
-        <DataTable data={users} columns={columns} url={url}  pathName = {pathName} />
+        <DataTable data={books} columns={columns} url={url} pathName = {pathName} />
       </div>
     </>
   );

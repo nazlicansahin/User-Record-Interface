@@ -1,13 +1,13 @@
 "use client"
 import DataTable from "/components/DataTable";
-import { states } from "/components/makeData";
+import { musicCategory } from "/components/makeData";
 import { usePathname } from "next/navigation";
 
 const url = "http://localhost:3000";
-async function getUsers() {
+async function getMusics() {
   // with revalidate: 10
   const res = await fetch(
-    `${url}/api/users`,
+    `${url}/api/musics`,
 
     {
       cache: "no-cache",
@@ -25,7 +25,7 @@ async function getUsers() {
   return res.json();
 }
 
-export default async function Users() {
+export default async function Musics() {
   const pathName = usePathname();
   //const [url, setUrl] = useState(new URL(window.location.href).origin);
   // get url origin with useRoturer
@@ -41,45 +41,45 @@ export default async function Users() {
       type: "id",
     },
     {
-      accessorKey: "firstName",
-      header: "First Name",
+      accessorKey: "musicName",
+      header: "Music Name",
       size: 140,
       type: "text",
     },
     {
-      accessorKey: "lastName",
-      header: "Last Name",
+      accessorKey: "artistName",
+      header: "Artist Name",
       size: 140,
       type: "text",
     },
     {
-      accessorKey: "email",
-      header: "Email",
-      type: "email",
+      accessorKey: "albumName",
+      header: "Album Name",
+      type: "text",
     },
     {
-      accessorKey: "age",
-      header: "Age",
+      accessorKey: "releaseYear",
+      header: "Release Year",
       size: 80,
       type: "number",
     },
     {
-      accessorKey: "state",
-      header: "State",
+      accessorKey: "category",
+      header: "Category",
       type: "select",
-      values: states,
+      values: musicCategory,
     },
   ];
 
-  const userData = await getUsers();
+  const musicData = await getMusics();
 
-  const [users] = await Promise.all([userData]);
+  const [musics] = await Promise.all([musicData]);
 
   return (
     <>
       <h1>Hello</h1>
       <div>
-        <DataTable data={users} columns={columns} url={url}  pathName = {pathName} />
+        <DataTable data={musics} columns={columns} url={url}  pathName = {pathName} />
       </div>
     </>
   );

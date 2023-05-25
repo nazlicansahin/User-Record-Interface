@@ -66,9 +66,41 @@ export const data: Person[] = [
     age: 25,
     state: 'Nebraska',
   },
-];
-*/
+];*/
+
 //50 us states array
+
+export const categories = [
+  'Tarih',
+  'Edebiyat',
+  'Bilim',
+  'Sanat',
+  'Spor',
+  'Müzik',
+  'Sinema',
+  'Bilgisayar',
+  'Bilim Kurgu',
+  'Çocuk',
+  'Din',
+  'Felsefe',
+  'Hukuk',
+  'İşletme',
+  'Mizah',
+  'Psikoloji',
+  'Siyaset',
+  'Sosyoloji',
+  'Tıp',
+  'Yemek',
+  'Yabancı Dil',
+  'Diğer',
+
+];
+export const priority = [
+  'Acil',
+  'Normal',
+  'Düşük',
+];
+
 export const states = [
   'Alabama',
   'Alaska',
@@ -121,4 +153,29 @@ export const states = [
   'Wisconsin',
   'Wyoming',
   'Puerto Rico',
+];
+
+
+export const musicCategory = [
+  'Pop',
+  'Rock',
+  'Jazz',
+  'Klasik',
+  'Rap',
+  'Hip Hop',
+  'Metal',
+  'Country',
+  'Blues',
+  'Reggae',
+  'Folk',
+  'Diğer',
+];
+
+export const taskStatus = [
+  "Completed",
+  "In Progress",
+  "Not Started",
+  "On Hold",
+  "Deferred",
+  "Waiting on someone else",
 ];

@@ -1,13 +1,13 @@
 "use client"
 import DataTable from "/components/DataTable";
-import { states } from "/components/makeData";
+import { taskStatus } from "/components/makeData";
 import { usePathname } from "next/navigation";
 
 const url = "http://localhost:3000";
-async function getUsers() {
+async function getTasks() {
   // with revalidate: 10
   const res = await fetch(
-    `${url}/api/users`,
+    `${url}/api/tasks`,
 
     {
       cache: "no-cache",
@@ -25,7 +25,7 @@ async function getUsers() {
   return res.json();
 }
 
-export default async function Users() {
+export default async function Tasks() {
   const pathName = usePathname();
   //const [url, setUrl] = useState(new URL(window.location.href).origin);
   // get url origin with useRoturer
@@ -41,46 +41,49 @@ export default async function Users() {
       type: "id",
     },
     {
-      accessorKey: "firstName",
-      header: "First Name",
+      accessorKey: "taskName",
+      header: "Task Name",
       size: 140,
       type: "text",
     },
     {
-      accessorKey: "lastName",
-      header: "Last Name",
+      accessorKey: "description",
+      header: "Description",
       size: 140,
       type: "text",
     },
     {
-      accessorKey: "email",
-      header: "Email",
-      type: "email",
+      accessorKey: "assignee",
+      header: "Assignee",
+      type: "text",
     },
     {
-      accessorKey: "age",
-      header: "Age",
+      accessorKey: "dueDate",
+      header: "Due Date",
       size: 80,
-      type: "number",
+      type: "datetime-local",
     },
     {
-      accessorKey: "state",
-      header: "State",
+      accessorKey: "status",
+      header: "Status",
       type: "select",
-      values: states,
+      values: taskStatus,
     },
   ];
 
-  const userData = await getUsers();
+  const taskData = await getTasks();
 
-  const [users] = await Promise.all([userData]);
+  const [tasks] = await Promise.all([taskData]);
 
   return (
     <>
       <h1>Hello</h1>
       <div>
-        <DataTable data={users} columns={columns} url={url}  pathName = {pathName} />
+        <DataTable data={tasks} columns={columns} url={url}  pathName = {pathName} />
       </div>
     </>
   );
 }
+
+
+

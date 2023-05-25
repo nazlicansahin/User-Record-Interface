@@ -25,11 +25,11 @@ export async function POST(request) {
       delete element.id;
     });
     try {
-      await db.collection("users").insertMany(requestBody);
+      await db.collection("musics").insertMany(requestBody);
     } catch (error) {
       console.log(error);
       client.close();
-      return new Response("Multiple user creation is failed", {
+      return new Response("Multiple music creation is failed", {
         status: 500,
         headers: { referer: referer },
       });
@@ -37,12 +37,12 @@ export async function POST(request) {
   } else {
     delete requestBody.id;
   try {
-    console.log("single user");
-    const result = await db.collection("users").insertOne(requestBody);
+    console.log("single music");
+    const result = await db.collection("musics").insertOne(requestBody);
   } catch (error) {
     console.log(error);
     client.close();
-    return new Response("single user creation failed!", {
+    return new Response("single music creation failed!", {
       status: 500,
       headers: { referer: referer },
     });
@@ -73,7 +73,7 @@ export async function GET() {
   }
   const db = client.db();
   try {
-    const documents = await db.collection("users").find().toArray();
+    const documents = await db.collection("musics").find().toArray();
     client.close();
     documents.forEach((element) => {
       element.id = element._id.toString();

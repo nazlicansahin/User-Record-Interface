@@ -7,7 +7,7 @@ import { NextURL } from "next/dist/server/web/next-url";
 
 
 const uri = process.env.URL
-  // get one user by id
+  // get one music by id
   export async function GET(request) {
     //get last part of url
     const url = new NextURL(request.url);
@@ -26,10 +26,10 @@ const uri = process.env.URL
       });
     }
     const db = client.db();
-    let user;
+    let music;
     try {
-      user = await db
-        .collection("users")
+      music = await db
+        .collection("musics")
         .findOne({ _id: new ObjectId(id) });
     } catch (error) {
       client.close();
@@ -39,7 +39,7 @@ const uri = process.env.URL
       });
     }
     client.close();
-    return NextResponse.json(user,
+    return NextResponse.json(music,
       {
         status: 200,
         headers: { referer: referer },
@@ -47,7 +47,7 @@ const uri = process.env.URL
     );
   }
 
-  // update one user by id
+  // update one music by id
   export async function PUT(request) {
     const url = new NextURL(request.url);
     const id = url.pathname.split("/").pop();
@@ -66,7 +66,7 @@ const uri = process.env.URL
     const db = client.db();
     try {
       await db
-        .collection("users")
+        .collection("musics")
         .updateOne({ _id: new ObjectId(id) }, { $set: requestBody });
     } catch (error) {
       client.close();
@@ -77,7 +77,7 @@ const uri = process.env.URL
     }
     client.close();
     return NextResponse.json(
-      { message: "Successfully updated user!" },
+      { message: "Successfully updated music!" },
       {
         status: 200,
         headers: { referer: referer },
@@ -85,7 +85,7 @@ const uri = process.env.URL
     );
   }
 
-  // delete one user by id
+  // delete one music by id
   export async function DELETE(request) {
     const url = new NextURL(request.url);
     const id = url.pathname.split("/").pop();
@@ -103,7 +103,7 @@ const uri = process.env.URL
     const db = client.db();
     try {
       await db
-        .collection("users")
+        .collection("musics")
         .deleteOne({ _id: new ObjectId(id) });
     } catch (error) {
       client.close();
@@ -114,7 +114,7 @@ const uri = process.env.URL
     }
     client.close();
     return NextResponse.json(
-      { message: "Successfully deleted user!" },
+      { message: "Successfully deleted music!" },
       {
         status: 200,
         headers: { referer: referer },
@@ -122,7 +122,7 @@ const uri = process.env.URL
     );
   }
 
-  // create one user
+  // create one music
   export async function POST(request) {
     const headersList = headers();
     const referer = headersList.get("referer");
@@ -138,7 +138,7 @@ const uri = process.env.URL
     }
     const db = client.db();
     try {
-      await db.collection("users").insertOne(requestBody);
+      await db.collection("musics").insertOne(requestBody);
     } catch (error) {
       client.close();
       return new Response("Storing message failed!", {
