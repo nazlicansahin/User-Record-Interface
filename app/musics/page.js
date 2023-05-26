@@ -77,7 +77,6 @@ export default async function Musics() {
 
   return (
     <>
-      <h1>Hello</h1>
       <div>
         <DataTable data={musics} columns={columns} url={url}  pathName = {pathName} />
       </div>

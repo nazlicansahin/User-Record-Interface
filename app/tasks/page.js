@@ -77,7 +77,6 @@ export default async function Tasks() {
 
   return (
     <>
-      <h1>Hello</h1>
       <div>
         <DataTable data={tasks} columns={columns} url={url}  pathName = {pathName} />
       </div>

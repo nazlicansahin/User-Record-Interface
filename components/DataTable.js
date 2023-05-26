@@ -16,10 +16,34 @@ import {
   Tooltip,
 } from "@mui/material";
 
+import Snackbar from "@mui/material/Snackbar";
+import MuiAlert from "@mui/material/Alert";
+
 import { Delete, Edit } from "@mui/icons-material";
 
-const Table = ({ data, columns, url, pathName }) => {
+const Alert = React.forwardRef(function Alert(props, ref) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 
+const Table = ({ data, columns, url, pathName }) => {
+  const message = {
+    type: "success",
+    text: "Success",
+  };
+  const [theMessage, setTheMessage] = useState(message);
+  const [open, setOpen] = React.useState(false);
+
+  const handleClick = () => {
+    setOpen(true);
+  };
+
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setOpen(false);
+  };
 
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [tableData, setTableData] = useState(() => data);
@@ -43,10 +67,18 @@ const Table = ({ data, columns, url, pathName }) => {
         data.data.id = data.data._id;
         setTableData([...tableData, data.data]);
         setCreateModalOpen(false);
+
+        message.type = "success";
+        message.text = "data inserted successfully";
+        setTheMessage(message);
       })
       .catch((err) => {
+        message.type = "error";
+        message.text = "data not inserted successfully";
+        setTheMessage(message);
         console.log(err);
       });
+    handleClick();
   };
 
   const handleSaveRowEdits = async ({ exitEditingMode, row, values }) => {
@@ -64,11 +96,19 @@ const Table = ({ data, columns, url, pathName }) => {
       });
       setTableData([...tableData]);
       exitEditingMode(); //required to exit editing mode and close modal
+      message.type = "success";
+      message.text = "data updated successfully";
+      setTheMessage(message);
+      handleClick();
     }
   };
 
   const handleCancelRowEdits = () => {
     setValidationErrors({});
+    message.type = "info";
+    message.text = "data not updated successfully";
+    setTheMessage(message);
+    handleClick();
   };
 
   const handleDeleteRow = useCallback(
@@ -76,6 +116,10 @@ const Table = ({ data, columns, url, pathName }) => {
       if (
         !confirm(`Are you sure you want to delete ${row.getValue("firstName")}`)
       ) {
+        message.type = "info";
+        message.text = "data not deleted";
+        setTheMessage(message);
+        handleClick();
         return;
       }
       //send api delete request here, then refetch or update local table data for re-render
@@ -84,6 +128,10 @@ const Table = ({ data, columns, url, pathName }) => {
       });
       tableData.splice(row.index, 1);
       setTableData([...tableData]);
+      message.type = "success";
+      message.text = "data deleted successfully";
+      setTheMessage(message);
+      handleClick();
     },
     [tableData]
   );
@@ -162,6 +210,17 @@ const Table = ({ data, columns, url, pathName }) => {
 
   return (
     <>
+      <Stack spacing={2} sx={{ width: "100%" }}>
+        <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+          <Alert
+            onClose={handleClose}
+            severity={theMessage.type}
+            sx={{ width: "100%" }}
+          >
+            {theMessage.text}
+          </Alert>
+        </Snackbar>
+      </Stack>
       <MaterialReactTable
         displayColumnDefOptions={{
           "mrt-row-actions": {
@@ -194,6 +253,8 @@ const Table = ({ data, columns, url, pathName }) => {
         )}
         renderTopToolbarCustomActions={() => (
           <Button
+          className="
+          bg-blue-500"
             color="primary"
             onClick={() => setCreateModalOpen(true)}
             variant="contained"
@@ -244,14 +305,23 @@ export const CreateNewAccountModal = ({ open, columns, onClose, onSubmit }) => {
                 <TextField
                   key={column.accessorKey}
                   type={column.type}
-                  {...(column.type === "select") ? {
-                    select: true,
-                    children: column.values.map((value) => (
-                      <MenuItem key={value} value={value}>
-                        {value}
-                      </MenuItem>
-                    ))
-                  } : false}
+                  {...(column.type === "select"
+                    ? {
+                        select: true,
+                        children: column.values.map((value) => (
+                          <MenuItem key={value} value={value}>
+                            {value}
+                          </MenuItem>
+                        )),
+                      }
+                    : false)}
+                  {...(column.type === "datetime-local"
+                    ? {
+                        InputLabelProps: {
+                          shrink: true,
+                        },
+                      }
+                    : false)}
                   label={column.header}
                   name={column.accessorKey}
                   onChange={(e) =>
