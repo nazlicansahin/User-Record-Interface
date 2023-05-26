@@ -77,7 +77,6 @@ export default async function Countries() {
 
   return (
     <>
-      <h1>Hello</h1>
       <div>
         <DataTable data={countries} columns={columns} url={url}  pathName = {pathName} />
       </div>

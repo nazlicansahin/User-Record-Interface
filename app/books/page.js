@@ -68,6 +68,12 @@ export default async function Books() {
       type: "select",
       values: categories,
     },
+    {
+      accessorKey: "isRead",
+      header: "is Read",
+      type: "checkbox",
+      values: categories,
+    },
   ];
 
   const bookData = await getBooks();
@@ -76,7 +82,6 @@ export default async function Books() {
 
   return (
     <>
-      <h1>Hello</h1>
       <div>
         <DataTable data={books} columns={columns} url={url} pathName = {pathName} />
       </div>
